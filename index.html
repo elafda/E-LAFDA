@@ -3,37 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E Lafda - Get Your Anonymous Link</title>
+    <title>E-Lafda - Create a Room</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1 class="cool-title"><b>E-Lafda</b></h1>
-    <p class="tagline"><i>Find lafda around you !!</i></p>
-    <img src="illtom.png" alt="E Lafda Banner" class="header-image">
+    <h1>Welcome to E-Lafda</h1>
+    <p>Create a room and start anonymous debates!</p>
 
-    <main>
-        <section id="create-link">
-            <h2>Get Your Anonymous Link</h2>
-            <input type="text" id="username" placeholder="Enter your username" required>
-            <button onclick="generateLafdaLink()">Generate Your Link</button>
-            <p id="lafdaLink"></p>
-        </section>
-
-        <section id="illustration">
-           <!-- <img src="ill1.png" alt="Illustration" class="illustration-image">-->
-        </section>
-
-        <section id="message-display">
-            <h2>Received Messages</h2>
-            <ul id="messagesList"></ul>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 E Lafda. All rights reserved.</p>
-    </footer>
+    <div class="container">
+        <input type="text" id="realUsername" placeholder="Enter your real username">
+        <button onclick="createRoom()">Create Room</button>
+        <p id="roomLink"></p>
+    </div>
 
     <script src="script.js"></script>
 </body>

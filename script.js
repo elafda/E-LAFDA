@@ -1,132 +1,99 @@
-// Function to generate unique link
-function generateLafdaLink() {
-    let storedLink = localStorage.getItem("lafdaLink");
-    let storedExpiry = localStorage.getItem("lafdaExpiry");
-
-    if (storedLink && storedExpiry && Date.now() < storedExpiry) {
-        alert("You already have an active link! Please wait until it expires.");
+// Function to create a room
+function createRoom() {
+    let realUsername = document.getElementById("realUsername").value.trim();
+    if (realUsername === "") {
+        alert("Please enter your real username!");
         return;
     }
 
-    let username = document.getElementById("username").value.trim();
-    username = username.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    let roomId = Math.random().toString(36).substring(2, 8);
+    let roomLink = `room.html?room=${roomId}&creator=${encodeURIComponent(realUsername)}`;
 
-    if (username === "") {
-        alert("Please enter a valid username!");
+    localStorage.setItem(roomId, JSON.stringify({ creator: realUsername, messages: [] }));
+
+    document.getElementById("roomLink").innerHTML = `Your room: <a href="${roomLink}" target="_blank">${roomLink}</a>`;
+}
+
+// Function to join a room
+function joinRoom() {
+    let anonUsername = document.getElementById("anonUsername").value.trim();
+    if (anonUsername === "") {
+        alert("Choose an anonymous username!");
         return;
     }
 
-    let randomId = Math.random().toString(36).substring(2, 8);
-    let lafdaLink = `msg.html?user=${username}-${randomId}`;  // FIXED LINK FORMAT
-    let expiryTime = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
-
-    localStorage.setItem("lafdaLink", lafdaLink);
-    localStorage.setItem("lafdaExpiry", expiryTime);
-    localStorage.setItem("lafdaUser", username);
-
-    displayLafdaLink(lafdaLink, expiryTime);
+    localStorage.setItem("anonUsername", anonUsername);
+    document.getElementById("chatBox").style.display = "block";
 }
 
-// Function to check stored link and start countdown
-function checkStoredLafdaLink() {
-    let storedLink = localStorage.getItem("lafdaLink");
-    let storedExpiry = localStorage.getItem("lafdaExpiry");
-
-    if (storedLink && storedExpiry && Date.now() < storedExpiry) {
-        displayLafdaLink(storedLink, storedExpiry);
-    } else {
-        clearStoredLafdaLink();
-    }
-}
-
-// Function to display the link and start countdown
-function displayLafdaLink(link, expiryTime) {
-    document.getElementById("lafdaLink").innerHTML = `
-        <strong>Your Anonymous Link:</strong> 
-        <a href="${link}" target="_blank">${link}</a>
-        <p id="countdown"></p>
-    `;
-
-    startCountdown(expiryTime);
-}
-
-// Countdown Timer
-function startCountdown(expiryTime) {
-    function updateCountdown() {
-        let now = Date.now();
-        let timeLeft = expiryTime - now;
-
-        if (timeLeft <= 0) {
-            document.getElementById("lafdaLink").innerHTML = "Your link has expired! Generate a new one.";
-            clearStoredLafdaLink();
-            clearInterval(timer);
-            return;
-        }
-
-        let hours = Math.floor(timeLeft / (1000 * 60 * 60));
-        let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-        document.getElementById("countdown").innerText = `Expires in: ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateCountdown();
-    let timer = setInterval(updateCountdown, 1000);
-}
-
-// Function to clear stored link after expiration
-function clearStoredLafdaLink() {
-    localStorage.removeItem("lafdaLink");
-    localStorage.removeItem("lafdaExpiry");
-    localStorage.removeItem("lafdaUser");
-}
-
-// Function to submit a message
-function submitMessage() {
+// Function to load the room
+function loadRoom() {
     let params = new URLSearchParams(window.location.search);
-    let user = params.get("user");
-    let message = document.getElementById("messageBox").value.trim();
+    let roomId = params.get("room");
+    let creator = params.get("creator");
 
-    if (message === "") {
-        alert("Message cannot be empty!");
+    let roomData = JSON.parse(localStorage.getItem(roomId));
+
+    if (!roomData) {
+        document.body.innerHTML = "<h1>Room Not Found!</h1>";
         return;
     }
 
-    let messages = JSON.parse(localStorage.getItem("lafdaMessages")) || [];
-    let timestamp = new Date().toLocaleString();
+    document.getElementById("roomInfo").innerText = `Room ID: ${roomId} | Created by: ${creator}`;
 
-    messages.push({ user, message, timestamp });
-    localStorage.setItem("lafdaMessages", JSON.stringify(messages));
+    if (localStorage.getItem("anonUsername")) {
+        document.getElementById("chatBox").style.display = "block";
+    }
 
-    document.getElementById("confirmation").innerHTML = "✅ Message Sent!";
-    document.getElementById("messageBox").value = "";
+    if (localStorage.getItem("anonUsername") === creator) {
+        document.getElementById("deleteRoomBtn").style.display = "block";
+    }
+
+    loadMessages(roomId);
 }
 
-// Function to load messages on index.html
-function loadMessages() {
-    let storedUser = localStorage.getItem("lafdaUser");
-    let messages = JSON.parse(localStorage.getItem("lafdaMessages")) || [];
-    let filteredMessages = messages.filter(msg => msg.user === storedUser);
-    let messageList = document.getElementById("messagesList");
+// Function to send a message
+function sendMessage() {
+    let params = new URLSearchParams(window.location.search);
+    let roomId = params.get("room");
+    let anonUsername = localStorage.getItem("anonUsername");
+    let message = document.getElementById("messageInput").value.trim();
 
-    messageList.innerHTML = ""; // Clear old messages
+    if (message === "") return;
 
-    if (filteredMessages.length === 0) {
-        messageList.innerHTML = "<p>No messages yet.</p>";
-        return;
-    }
+    let roomData = JSON.parse(localStorage.getItem(roomId)) || { messages: [] };
+    roomData.messages.push({ user: anonUsername, text: message });
 
-    filteredMessages.forEach(msg => {
-        let li = document.createElement("li");
-        li.innerHTML = `<strong>${msg.timestamp}:</strong> ${msg.message}`;
-        messageList.appendChild(li);
+    localStorage.setItem(roomId, JSON.stringify(roomData));
+
+    document.getElementById("messageInput").value = "";
+    loadMessages(roomId);
+}
+
+// Function to load messages
+function loadMessages(roomId) {
+    let roomData = JSON.parse(localStorage.getItem(roomId)) || { messages: [] };
+    let messagesDiv = document.getElementById("messages");
+    messagesDiv.innerHTML = "";
+
+    roomData.messages.forEach(msg => {
+        let msgDiv = document.createElement("div");
+        msgDiv.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
+        messagesDiv.appendChild(msgDiv);
     });
 }
 
-// Run checks on page load
-window.onload = function() {
-    checkStoredLafdaLink();
-    if (document.getElementById("messagesList")) {
-        loadMessages();
-    }
-};
+// Function to delete room
+function deleteRoom() {
+    let params = new URLSearchParams(window.location.search);
+    let roomId = params.get("room");
+
+    localStorage.removeItem(roomId);
+    alert("Room deleted!");
+    window.location.href = "index.html";
+}
+
+// Load the room when `room.html` opens
+if (window.location.pathname.includes("room.html")) {
+    loadRoom();
+}
