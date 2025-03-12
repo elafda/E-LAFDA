@@ -1,12 +1,11 @@
 // ✅ Firebase Configuration (Replace with actual values from Firebase Console)
 const firebaseConfig = {
-  apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
-  authDomain: "e-lafda-2a24c.firebaseapp.com",
-  projectId: "e-lafda-2a24c",
-  storageBucket: "e-lafda-2a24c.firebasestorage.app",
-  messagingSenderId: "263237488063",
-  appId: "1:263237488063:web:70db3731e500a9e9c6250a",
-  measurementId: "G-H53HVJ9BX6"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 // ✅ Ensure Firebase is initialized before Firestore
