@@ -1,4 +1,3 @@
-// ✅ Firebase Configuration (Replace with actual values from Firebase Console)
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -8,15 +7,14 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// ✅ Ensure Firebase is initialized before Firestore
+// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// ✅ Initialize Firestore
 const db = firebase.firestore();
 
-// ✅ Function to create a room
+// Function to create a room
 function createRoom() {
     let realUsername = document.getElementById("realUsername").value.trim();
     if (realUsername === "") {
@@ -27,23 +25,18 @@ function createRoom() {
     let roomId = Math.random().toString(36).substring(2, 8);
     let roomLink = `room.html?room=${roomId}`;
 
-    console.log("Creating room:", roomId); // Debugging output
-
-    // ✅ Save room in Firestore and ensure it updates the UI
     db.collection("rooms").doc(roomId).set({
         creator: realUsername,
         messages: []
     }).then(() => {
-        console.log("Room created successfully! Room ID:", roomId);
         document.getElementById("roomLink").innerHTML = 
             `Your room: <a href="${roomLink}" target="_blank">${roomLink}</a>`;
     }).catch(error => {
-        console.error("Error creating room:", error);
         alert("⚠️ Failed to create room. Check Firestore rules.");
     });
 }
 
-// ✅ Function to join a room
+// Function to join a room
 function joinRoom() {
     let anonUsername = document.getElementById("anonUsername").value.trim();
     if (anonUsername === "") {
@@ -55,7 +48,7 @@ function joinRoom() {
     document.getElementById("chatBox").style.display = "block";
 }
 
-// ✅ Function to load the room
+// Function to load the room
 function loadRoom() {
     let params = new URLSearchParams(window.location.search);
     let roomId = params.get("room");
@@ -64,16 +57,16 @@ function loadRoom() {
         if (doc.exists) {
             let roomData = doc.data();
             document.getElementById("roomInfo").innerText = `Room ID: ${roomId} | Created by: ${roomData.creator}`;
+            loadMessages(roomId); // Now loads messages in real-time
         } else {
             document.body.innerHTML = "<h1>⚠️ Room Not Found!</h1>";
         }
     }).catch(error => {
-        console.error("Error fetching room:", error);
         alert("⚠️ Could not load room.");
     });
 }
 
-// ✅ Function to send a message
+// Function to send a message
 function sendMessage() {
     let params = new URLSearchParams(window.location.search);
     let roomId = params.get("room");
@@ -91,12 +84,11 @@ function sendMessage() {
     }).then(() => {
         document.getElementById("messageInput").value = "";
     }).catch(error => {
-        console.error("Error sending message:", error);
         alert("⚠️ Could not send message.");
     });
 }
 
-// ✅ Function to load messages in real-time
+// Function to load messages in real-time
 function loadMessages(roomId) {
     db.collection("rooms").doc(roomId).onSnapshot(doc => {
         let messagesDiv = document.getElementById("messages");
@@ -113,21 +105,32 @@ function loadMessages(roomId) {
     });
 }
 
-// ✅ Function to delete room (Only creator)
+// Function to delete room (Only creator)
 function deleteRoom() {
     let params = new URLSearchParams(window.location.search);
     let roomId = params.get("room");
 
-    db.collection("rooms").doc(roomId).delete().then(() => {
-        alert("Room deleted!");
-        window.location.href = "index.html";
-    }).catch(error => {
-        console.error("Error deleting room:", error);
-        alert("⚠️ Could not delete room.");
+    db.collection("rooms").doc(roomId).get().then(doc => {
+        if (doc.exists) {
+            let creator = doc.data().creator;
+            let realUsername = prompt("Enter your real username to confirm deletion:");
+
+            if (realUsername !== creator) {
+                alert("⚠️ Only the creator can delete this room!");
+                return;
+            }
+
+            db.collection("rooms").doc(roomId).delete().then(() => {
+                alert("Room deleted!");
+                window.location.href = "index.html";
+            }).catch(error => {
+                alert("⚠️ Could not delete room.");
+            });
+        }
     });
 }
 
-// ✅ Ensure the room loads when `room.html` is opened
 if (window.location.pathname.includes("room.html")) {
     loadRoom();
 }
+
