@@ -1,4 +1,4 @@
-// Toggle Sidebar Menu
+// Toggle Sidebar Menu (Only for index.html)
 function toggleMenu() {
     let sidebar = document.getElementById("sidebar");
     if (sidebar.style.left === "0px") {
@@ -23,16 +23,4 @@ function generateLink() {
         <p>Your Anonymous Link:</p>
         <a href="${anonymousLink}" target="_blank">${window.location.origin}/${anonymousLink}</a>
     `;
-}
-
-// Send Anonymous Message
-function sendMessage() {
-    let message = document.getElementById("messageBox").value.trim();
-    if (message === "") {
-        alert("Message cannot be empty!");
-        return;
-    }
-
-    document.getElementById("status").innerText = "Message sent successfully!";
-    document.getElementById("messageBox").value = "";
 }

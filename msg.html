@@ -7,26 +7,33 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Sidebar Menu Button -->
-    <div class="menu-button" onclick="toggleMenu()">☰</div>
-
-    <!-- Sidebar Menu -->
-    <div id="sidebar" class="sidebar">
-        <button class="close-btn" onclick="toggleMenu()">✖</button>
-        <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </div>
-
     <div class="msg-container">
-        <h2>Send an Anonymous Message</h2>
+        <h2>Send an Anonymous Message to <span id="usernameDisplay"></span></h2>
         <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
         <button onclick="sendMessage()">Send</button>
         <p id="status"></p>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Get Username from URL
+        function getQueryParam(param) {
+            let urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        let username = getQueryParam("user") || "Unknown User";
+        document.getElementById("usernameDisplay").innerText = username;
+
+        function sendMessage() {
+            let message = document.getElementById("messageBox").value.trim();
+            if (message === "") {
+                alert("Message cannot be empty!");
+                return;
+            }
+
+            document.getElementById("status").innerText = "Message sent successfully!";
+            document.getElementById("messageBox").value = "";
+        }
+    </script>
 </body>
 </html>
