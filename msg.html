@@ -3,15 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leave a Message - E-Lafda</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Send Anonymous Message</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Drop an Anonymous Message</h1>
-        <textarea id="messageBox" placeholder="Type your message here..."></textarea>
-        <button onclick="submitMessage()">Send Message</button>
-        <p id="confirmation"></p>
+    <!-- Sidebar Menu Button -->
+    <div class="menu-button" onclick="toggleMenu()">☰</div>
+
+    <!-- Sidebar Menu -->
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">✖</button>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+
+    <div class="msg-container">
+        <h2>Send an Anonymous Message</h2>
+        <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
+        <button onclick="sendMessage()">Send</button>
+        <p id="status"></p>
     </div>
 
     <script src="script.js"></script>

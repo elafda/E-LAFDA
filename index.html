@@ -3,25 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Lafda - Create a Room</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>E-Lafda</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to E-Lafda</h1>
-    <p>Create a room and start anonymous debates!</p>
-
     <div class="container">
-        <input type="text" id="realUsername" placeholder="Enter your real username">
-        <button onclick="createRoom()">Create Room</button>
-        <p id="roomLink"></p>
+        <h1>elafda.com</h1>
+        <h2>Find Lafda Around You!</h2>
+        <input type="text" id="username" placeholder="Enter a unique username">
+        <button onclick="generateLink()">Generate Anonymous Link</button>
+        <p id="linkOutput"></p>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <script src="script.js"></script>
 </body>
 </html>
-
