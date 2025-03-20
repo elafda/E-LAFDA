@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,18 +12,38 @@
         <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
         <button onclick="sendMessage()">Send</button>
         <p id="status"></p>
+        <div id="messageList"></div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+
     <script>
+        // Firebase Configuration (Replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
+            authDomain: "elafda-com.firebaseapp.com",
+            projectId: "elafda-com",
+            storageBucket: "elafda-com.firebasestorage.app",
+            messagingSenderId: "887958270328",
+            appId: "1:887958270328:web:5e8395470a7e4a3017188d"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         // Get Username from URL
         function getQueryParam(param) {
             let urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        let username = getQueryParam("user") || "Unknown User";
+        let username = getQueryParam("user") || "Anonymous";
         document.getElementById("usernameDisplay").innerText = username;
 
+        // Store and Retrieve Messages
         function sendMessage() {
             let message = document.getElementById("messageBox").value.trim();
             if (message === "") {
@@ -31,9 +51,29 @@
                 return;
             }
 
-            document.getElementById("status").innerText = "Message sent successfully!";
-            document.getElementById("messageBox").value = "";
+            // Store message in Firestore
+            db.collection("messages").add({
+                username: username,
+                message: message,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                document.getElementById("status").innerText = "Message sent successfully!";
+                document.getElementById("messageBox").value = "";
+            }).catch(error => {
+                console.error("Error sending message:", error);
+            });
         }
+
+        // Retrieve and Display Messages
+        document.addEventListener("DOMContentLoaded", function () {
+            db.collection("messages")
+                .where("username", "==", username)
+                .orderBy("timestamp", "desc")
+                .onSnapshot(snapshot => {
+                    let messages = snapshot.docs.map(doc => `<p>📝 ${doc.data().message}</p>`).join("");
+                    document.getElementById("messageList").innerHTML = messages || "No messages yet.";
+                });
+        });
     </script>
 </body>
 </html>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <!-- Sidebar Menu Button -->
     <div class="menu-button" onclick="toggleMenu()">☰</div>
 
@@ -27,6 +28,30 @@
         <button onclick="generateLink()">Generate Anonymous Link</button>
         <p id="linkOutput"></p>
     </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase libraries
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        // Firebase Configuration (Replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
+            authDomain: "elafda-com.firebaseapp.com",
+            projectId: "elafda-com",
+            storageBucket: "elafda-com.firebasestorage.app",
+            messagingSenderId: "887958270328",
+            appId: "1:887958270328:web:5e8395470a7e4a3017188d"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Expose Firebase instance globally (needed for script.js)
+        window.firebaseDB = db;
+    </script>
 
     <script src="script.js"></script>
 </body>

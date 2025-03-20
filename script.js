@@ -1,4 +1,18 @@
-// Toggle Sidebar Menu (Only for index.html)
+// Firebase Configuration (Replace with your actual config)
+const firebaseConfig = {
+    apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
+    authDomain: "elafda-com.firebaseapp.com",
+    projectId: "elafda-com",
+    storageBucket: "elafda-com.firebasestorage.app",
+    messagingSenderId: "887958270328",
+    appId: "1:887958270328:web:5e8395470a7e4a3017188d"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Toggle Sidebar Menu (For index.html)
 function toggleMenu() {
     let sidebar = document.getElementById("sidebar");
     if (sidebar.style.left === "0px") {
