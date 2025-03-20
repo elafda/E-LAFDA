@@ -15,12 +15,13 @@
         <div id="messageList"></div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+    <!-- Firebase Setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } 
+            from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-    <script>
-        // Firebase Configuration (Replace with your actual config)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
             authDomain: "elafda-com.firebaseapp.com",
@@ -31,8 +32,11 @@
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Store database globally
+        window.firebaseDB = db;
 
         // Get Username from URL
         function getQueryParam(param) {
@@ -44,37 +48,37 @@
         document.getElementById("usernameDisplay").innerText = username;
 
         // Send Message Function
-        function sendMessage() {
+        async function sendMessage() {
             let message = document.getElementById("messageBox").value.trim();
             if (message === "") {
                 alert("Message cannot be empty!");
                 return;
             }
 
-            // Store message in Firestore
-            db.collection("messages").add({
-                username: username,
-                message: message,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                document.getElementById("status").innerText = "Message sent successfully!";
+            try {
+                await addDoc(collection(db, "messages"), {
+                    username: username,
+                    message: message,
+                    timestamp: serverTimestamp()
+                });
+                document.getElementById("status").innerText = "✅ Message sent!";
                 document.getElementById("messageBox").value = "";
-            }).catch(error => {
+            } catch (error) {
                 console.error("Error sending message:", error);
-            });
+                document.getElementById("status").innerText = "❌ Error sending message!";
+            }
         }
 
         // Retrieve and Display Messages
         document.addEventListener("DOMContentLoaded", function () {
-            db.collection("messages")
-                .where("username", "==", username)
-                .orderBy("timestamp", "desc")
-                .onSnapshot(snapshot => {
-                    let messages = snapshot.docs.map(doc => `<p>📝 ${doc.data().message}</p>`).join("");
-                    document.getElementById("messageList").innerHTML = messages || "No messages yet.";
-                });
+            const q = query(collection(db, "messages"), where("username", "==", username), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                let messages = snapshot.docs.map(doc => `<p>📩 ${doc.data().message}</p>`).join("");
+                document.getElementById("messageList").innerHTML = messages || "No messages yet.";
+            });
         });
     </script>
 
 </body>
 </html>
+s

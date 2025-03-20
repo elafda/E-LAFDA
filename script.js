@@ -1,4 +1,8 @@
-// Firebase Configuration (Replace with your actual config)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } 
+    from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
     authDomain: "elafda-com.firebaseapp.com",
@@ -9,10 +13,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// Toggle Sidebar Menu (For index.html)
+// Store Firestore globally for other scripts
+window.firebaseDB = db;
+
+// Toggle Sidebar Menu
 function toggleMenu() {
     let sidebar = document.getElementById("sidebar");
     if (sidebar.style.left === "0px") {
@@ -38,3 +45,32 @@ function generateLink() {
         <a href="${anonymousLink}" target="_blank">${window.location.origin}/${anonymousLink}</a>
     `;
 }
+
+// Send Message (For `msg.html`)
+async function sendMessage() {
+    let message = document.getElementById("messageBox").value.trim();
+    if (message === "") {
+        alert("Message cannot be empty!");
+        return;
+    }
+
+    let username = new URLSearchParams(window.location.search).get("user") || "Anonymous";
+
+    try {
+        await addDoc(collection(db, "messages"), {
+            username: username,
+            message: message,
+            timestamp: serverTimestamp()
+        });
+        document.getElementById("status").innerText = "✅ Message sent!";
+        document.getElementById("messageBox").value = "";
+    } catch (error) {
+        console.error("Error sending message:", error);
+        document.getElementById("status").innerText = "❌ Error sending message!";
+    }
+}
+
+// Expose functions globally
+window.toggleMenu = toggleMenu;
+window.generateLink = generateLink;
+window.sendMessage = sendMessage;
