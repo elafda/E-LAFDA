@@ -1,0 +1,45 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
+    authDomain: "e-lafda-2a24c.firebaseapp.com",
+    projectId: "e-lafda-2a24c",
+    storageBucket: "e-lafda-2a24c.firebasestorage.app",
+    messagingSenderId: "263237488063",
+    appId: "1:263237488063:web:70db3731e500a9e9c6250a",
+    measurementId: "G-H53HVJ9BX6"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const messageInput = document.getElementById('messageInput');
+const sendMessageBtn = document.getElementById('sendMessageBtn');
+const statusMessage = document.getElementById('statusMessage');
+
+// Get the unique identifier from the URL
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('id'); // Assuming the URL is like message.html?id=uniqueId
+
+sendMessageBtn.addEventListener('click', async () => {
+    const message = messageInput.value;
+    if (message) {
+        try {
+            await addDoc(collection(db, 'anon_messages'), {
+                message: message,
+                timestamp: new Date(),
+                userId: userId // Store the userId with the message
+            });
+            statusMessage.textContent = "Message sent!";
+            messageInput.value = ''; // Clear the input
+        } catch (error) {
+            console.error("Error sending message: ", error);
+            statusMessage.textContent = "Error sending message.";
+        }
+    } else {
+        statusMessage.textContent = "Please enter a message.";
+    }
+});
