@@ -71,7 +71,9 @@
 
         // Retrieve and Display Messages
         document.addEventListener("DOMContentLoaded", function () {
-            const q = query(collection(db, "messages"), where("username", "==", username), orderBy("timestamp", "desc"));
+            //const q = query(collection(db, "messages"), where("username", "==", username), orderBy("timestamp", "desc"));
+            const q = query(collection(db, "messages"), where("username", "==", username));
+
             onSnapshot(q, (snapshot) => {
                 let messages = snapshot.docs.map(doc => `<p>📩 ${doc.data().message}</p>`).join("");
                 document.getElementById("messageList").innerHTML = messages || "No messages yet.";
