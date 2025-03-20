@@ -131,15 +131,48 @@ button:hover {
     box-shadow: 0 6px 15px rgba(255, 69, 0, 0.7);
 }
 
-/* Messages Section */
-.messages-section {
-    margin-top: 40px;
-    padding: 20px;
+/* Messages Icon */
+.messages-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 40px;
+    cursor: pointer;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 15px;
+    transition: background 0.3s, transform 0.3s;
+    z-index: 1000;
 }
 
+.messages-icon:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Sliding Messages Panel */
+.messages-panel {
+    position: fixed;
+    top: 0;
+    right: -300px; /* Hidden by default */
+    width: 300px;
+    height: 100%;
+    background: #222;
+    padding: 20px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s;
+    z-index: 1001;
+}
+
+.close-panel {
+    background: transparent;
+    border: none;
+    color: #f0f0f0;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/* Message List */
 .message-list {
     margin-top: 10px;
     text-align: left;

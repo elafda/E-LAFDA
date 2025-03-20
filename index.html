@@ -29,8 +29,14 @@
         <p id="linkOutput"></p>
     </div>
 
-    <!-- Messages Section -->
-    <div class="messages-section">
+    <!-- Messages Icon -->
+    <div class="messages-icon" onclick="toggleMessagesPanel()" aria-label="View Messages">
+        📩
+    </div>
+
+    <!-- Sliding Messages Panel -->
+    <div id="messagesPanel" class="messages-panel">
+        <button class="close-panel" onclick="toggleMessagesPanel()" aria-label="Close Messages Panel">✖</button>
         <h2>Messages Received</h2>
         <div id="receivedMessages" class="message-list"></div>
     </div>
@@ -88,6 +94,12 @@
 
             // Display received messages for the entered username
             displayReceivedMessages(username);
+        }
+
+        // Toggle Messages Panel
+        window.toggleMessagesPanel = function () {
+            const panel = document.getElementById("messagesPanel");
+            panel.style.right = (panel.style.right === "0px" || panel.style.right === "") ? "-300px" : "0px";
         }
     </script>
 
