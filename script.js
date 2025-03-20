@@ -56,14 +56,17 @@ window.sendMessage = async function () {
     let username = new URLSearchParams(window.location.search).get("user") || "Anonymous";
 
     try {
+        // Attempt to add the message to Firestore
         await addDoc(collection(db, "messages"), {
             username: username,
             message: message,
             timestamp: serverTimestamp()
         });
+        // If successful, update the status
         document.getElementById("status").innerText = "✅ Message sent!";
         document.getElementById("messageBox").value = "";
     } catch (error) {
+        // If there is an error, log it and update the status
         console.error("Error sending message:", error);
         document.getElementById("status").innerText = "❌ Error sending message!";
     }
