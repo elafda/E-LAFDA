@@ -99,7 +99,11 @@
         // Toggle Messages Panel
         window.toggleMessagesPanel = function () {
             const panel = document.getElementById("messagesPanel");
-            panel.style.right = (panel.style.right === "0px" || panel.style.right === "") ? "-300px" : "0px";
+            if (panel.style.right === "0px") {
+                panel.style.right = "-400px"; // Hide the panel
+            } else {
+                panel.style.right = "0px"; // Show the panel
+            }
         }
     </script>
 
