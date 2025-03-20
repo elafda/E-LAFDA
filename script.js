@@ -1,46 +1,63 @@
+// Import Firestore functions
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } 
-    from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
-    authDomain: "e-lafda-2a24c.firebaseapp.com",
-    projectId: "e-lafda-2a24c",
-    storageBucket: "e-lafda-2a24c.firebasestorage.app",
-    messagingSenderId: "263237488063",
-    appId: "1:263237488063:web:70db3731e500a9e9c6250a",
-    measurementId: "G-H53HVJ9BX6"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-// Store Firestore globally for other scripts
-window.firebaseDB = db;
+// Function to send a message
+async function sendMessage() {
+    let message = document.getElementById("messageBox").value.trim();
 
-// Toggle Sidebar Menu
-window.toggleMenu = function () {
-    let sidebar = document.getElementById("sidebar");
-    sidebar.style.left = (sidebar.style.left === "0px" || sidebar.style.left === "") ? "-250px" : "0px";
-}
-
-// Generate Anonymous Link
-window.generateLink = function () {
-    let username = document.getElementById("username").value.trim();
-    if (username === "") {
-        alert("Please enter a username.");
+    if (message === "") {
+        alert("Message cannot be empty!");
         return;
     }
 
-    let uniqueID = Math.random().toString(36).substring(2, 10);
-    let anonymousLink = `msg.html?user=${encodeURIComponent(username)}&id=${uniqueID}`;
+    try {
+        // Add a new document to the 'messages' collection
+        await addDoc(collection(db, "messages"), {
+            message: message, // Store the message content
+            timestamp: serverTimestamp() // Automatically set the timestamp
+        });
+        document.getElementById("status").innerText = "✅ Message sent!";
+        document.getElementById("messageBox").value = ""; // Clear the message box
+    } catch (error) {
+        console.error("Error sending message:", error);
+        document.getElementById("status").innerText = "❌ Error sending message!";
+    }
+}
 
-    document.getElementById("linkOutput").innerHTML = `
-        <p>Your Anonymous Link:</p>
-        <a href="${anonymousLink}" target="_blank">${anonymousLink}</a>
-    `;
+// Function to display received messages
+function displayReceivedMessages() {
+    const q = query(collection(db, "messages")); // Retrieve all messages
+    onSnapshot(q, (snapshot) => {
+        let messages = snapshot.docs.map(doc => `<p>📩 ${doc.data().message}</p>`).join("");
+        document.getElementById("receivedMessages").innerHTML = messages || "No messages received yet.";
+    });
+}
+
+// Call this function when the page loads to display messages
+document.addEventListener("DOMContentLoaded", displayReceivedMessages);
+
+// Toggle Messages Panel
+window.toggleMessagesPanel = function () {
+    const panel = document.getElementById("messagesPanel");
+    if (panel.style.right === "0px") {
+        panel.style.right = "-400px"; // Hide the panel
+    } else {
+        panel.style.right = "0px"; // Show the panel
+    }
 }
