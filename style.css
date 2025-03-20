@@ -131,41 +131,21 @@ button:hover {
     box-shadow: 0 6px 15px rgba(255, 69, 0, 0.7);
 }
 
-/* Message Box */
-.msg-container {
-    margin-top: 50px;
+/* Messages Section */
+.messages-section {
+    margin-top: 40px;
     padding: 20px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-textarea {
-    width: 90%;
-    max-width: 500px;
-    height: 100px;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background: rgba(255, 255, 255, 0.1);
-    color: #f0f0f0;
-    outline: none;
-    transition: border 0.3s, background 0.3s;
-}
-
-textarea:focus {
-    border: 1px solid #ff4500;
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* Message List */
-#messageList {
-    margin-top: 20px;
+.message-list {
+    margin-top: 10px;
     text-align: left;
 }
 
-#messageList p {
+.message-list p {
     background: rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 5px;
@@ -173,6 +153,6 @@ textarea:focus {
     transition: background 0.3s;
 }
 
-#messageList p:hover {
+.message-list p:hover {
     background: rgba(255, 255, 255, 0.2);
 }

@@ -44,30 +44,3 @@ window.generateLink = function () {
         <a href="${anonymousLink}" target="_blank">${anonymousLink}</a>
     `;
 }
-
-// Send Message (For `msg.html`)
-window.sendMessage = async function () {
-    let message = document.getElementById("messageBox").value.trim();
-    if (message === "") {
-        alert("Message cannot be empty!");
-        return;
-    }
-
-    let username = new URLSearchParams(window.location.search).get("user") || "Anonymous";
-
-    try {
-        // Attempt to add the message to Firestore
-        await addDoc(collection(db, "messages"), {
-            username: username,
-            message: message,
-            timestamp: serverTimestamp()
-        });
-        // If successful, update the status
-        document.getElementById("status").innerText = "✅ Message sent!";
-        document.getElementById("messageBox").value = "";
-    } catch (error) {
-        // If there is an error, log it and update the status
-        console.error("Error sending message:", error);
-        document.getElementById("status").innerText = "❌ Error sending message!";
-    }
-};
