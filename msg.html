@@ -18,39 +18,28 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
-
+    
     <script>
-        // Firebase Configuration (Replace with your actual config)
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
-            authDomain: "elafda-com.firebaseapp.com",
-            projectId: "elafda-com",
-            storageBucket: "elafda-com.firebasestorage.app",
-            messagingSenderId: "887958270328",
-            appId: "1:887958270328:web:5e8395470a7e4a3017188d"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        // Use Firebase instance from index.html
         const db = firebase.firestore();
-
+    
         // Get Username from URL
         function getQueryParam(param) {
             let urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
-
+    
         let username = getQueryParam("user") || "Anonymous";
         document.getElementById("usernameDisplay").innerText = username;
-
-        // Store and Retrieve Messages
+    
+        // Send Message Function (Fixed)
         function sendMessage() {
             let message = document.getElementById("messageBox").value.trim();
             if (message === "") {
                 alert("Message cannot be empty!");
                 return;
             }
-
+    
             // Store message in Firestore
             db.collection("messages").add({
                 username: username,
@@ -63,7 +52,7 @@
                 console.error("Error sending message:", error);
             });
         }
-
+    
         // Retrieve and Display Messages
         document.addEventListener("DOMContentLoaded", function () {
             db.collection("messages")
@@ -75,5 +64,6 @@
                 });
         });
     </script>
+    
 </body>
 </html>
