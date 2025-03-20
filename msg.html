@@ -1,60 +1,80 @@
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Anonymous Message</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="msg-container">
+        <h2>Send an Anonymous Message to <span id="usernameDisplay"></span></h2>
+        <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
+        <button onclick="sendMessage()">Send</button>
+        <p id="status"></p>
+        <div id="messageList"></div>
+    </div>
 
-<script>
-    // Firebase Configuration (Must Match `index.html`)
-    const firebaseConfig = {
-        apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
-        authDomain: "elafda-com.firebaseapp.com",
-        projectId: "elafda-com",
-        storageBucket: "elafda-com.firebasestorage.app",
-        messagingSenderId: "887958270328",
-        appId: "1:887958270328:web:5e8395470a7e4a3017188d"
-    };
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    <script>
+        // Firebase Configuration (Replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
+            authDomain: "elafda-com.firebaseapp.com",
+            projectId: "elafda-com",
+            storageBucket: "elafda-com.firebasestorage.app",
+            messagingSenderId: "887958270328",
+            appId: "1:887958270328:web:5e8395470a7e4a3017188d"
+        };
 
-    // Get Username from URL
-    function getQueryParam(param) {
-        let urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    let username = getQueryParam("user") || "Anonymous";
-    document.getElementById("usernameDisplay").innerText = username;
-
-    // Send Message Function (Fixed)
-    function sendMessage() {
-        let message = document.getElementById("messageBox").value.trim();
-        if (message === "") {
-            alert("Message cannot be empty!");
-            return;
+        // Get Username from URL
+        function getQueryParam(param) {
+            let urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
         }
 
-        // Store message in Firestore
-        db.collection("messages").add({
-            username: username,
-            message: message,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => {
-            document.getElementById("status").innerText = "Message sent successfully!";
-            document.getElementById("messageBox").value = "";
-        }).catch(error => {
-            console.error("Error sending message:", error);
-        });
-    }
+        let username = getQueryParam("user") || "Anonymous";
+        document.getElementById("usernameDisplay").innerText = username;
 
-    // Retrieve and Display Messages
-    document.addEventListener("DOMContentLoaded", function () {
-        db.collection("messages")
-            .where("username", "==", username)
-            .orderBy("timestamp", "desc")
-            .onSnapshot(snapshot => {
-                let messages = snapshot.docs.map(doc => `<p>📝 ${doc.data().message}</p>`).join("");
-                document.getElementById("messageList").innerHTML = messages || "No messages yet.";
+        // Send Message Function
+        function sendMessage() {
+            let message = document.getElementById("messageBox").value.trim();
+            if (message === "") {
+                alert("Message cannot be empty!");
+                return;
+            }
+
+            // Store message in Firestore
+            db.collection("messages").add({
+                username: username,
+                message: message,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                document.getElementById("status").innerText = "Message sent successfully!";
+                document.getElementById("messageBox").value = "";
+            }).catch(error => {
+                console.error("Error sending message:", error);
             });
-    });
-</script>
+        }
+
+        // Retrieve and Display Messages
+        document.addEventListener("DOMContentLoaded", function () {
+            db.collection("messages")
+                .where("username", "==", username)
+                .orderBy("timestamp", "desc")
+                .onSnapshot(snapshot => {
+                    let messages = snapshot.docs.map(doc => `<p>📝 ${doc.data().message}</p>`).join("");
+                    document.getElementById("messageList").innerHTML = messages || "No messages yet.";
+                });
+        });
+    </script>
+
+</body>
+</html>
