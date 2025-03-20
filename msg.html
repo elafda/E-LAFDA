@@ -9,7 +9,7 @@
 <body>
     <div class="msg-container">
         <h2>Send an Anonymous Message to <span id="usernameDisplay"></span></h2>
-        <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
+        <textarea id="messageBox" placeholder="Type your message here..." rows="4" aria-label="Message"></textarea>
         <button onclick="sendMessage()">Send</button>
         <p id="status"></p>
         <div id="messageList"></div>
@@ -18,7 +18,7 @@
     <!-- Firebase Setup -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } 
+        import { getFirestore, collection, addDoc, query, where, onSnapshot, serverTimestamp } 
             from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
         // Firebase Configuration
@@ -26,7 +26,7 @@
             apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
             authDomain: "elafda-com.firebaseapp.com",
             projectId: "elafda-com",
-            storageBucket: "elafda-com.firebasestorage.app",
+            storageBucket: "elafda-com.appspot.com",
             messagingSenderId: "887958270328",
             appId: "1:887958270328:web:5e8395470a7e4a3017188d"
         };
@@ -71,7 +71,6 @@
 
         // Retrieve and Display Messages
         document.addEventListener("DOMContentLoaded", function () {
-            //const q = query(collection(db, "messages"), where("username", "==", username), orderBy("timestamp", "desc"));
             const q = query(collection(db, "messages"), where("username", "==", username));
 
             onSnapshot(q, (snapshot) => {
@@ -83,4 +82,3 @@
 
 </body>
 </html>
-s

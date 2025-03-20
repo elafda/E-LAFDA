@@ -9,11 +9,11 @@
 <body>
 
     <!-- Sidebar Menu Button -->
-    <div class="menu-button" onclick="toggleMenu()">☰</div>
+    <div class="menu-button" onclick="toggleMenu()" aria-label="Toggle menu">☰</div>
 
     <!-- Sidebar Menu -->
-    <div id="sidebar" class="sidebar">
-        <button class="close-btn" onclick="toggleMenu()">✖</button>
+    <div id="sidebar" class="sidebar" role="navigation">
+        <button class="close-btn" onclick="toggleMenu()" aria-label="Close menu">✖</button>
         <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#">About</a></li>
@@ -24,7 +24,7 @@
     <div class="container">
         <h1>elafda.com</h1>
         <h2>Find Lafda Around You!</h2>
-        <input type="text" id="username" placeholder="Enter a unique username">
+        <input type="text" id="username" placeholder="Enter a unique username" aria-label="Username">
         <button onclick="generateLink()">Generate Anonymous Link</button>
         <p id="linkOutput"></p>
     </div>
@@ -35,12 +35,12 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-        // Firebase Configuration (Replace with your actual config)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
             authDomain: "elafda-com.firebaseapp.com",
             projectId: "elafda-com",
-            storageBucket: "elafda-com.firebasestorage.app",
+            storageBucket: "elafda-com.appspot.com",
             messagingSenderId: "887958270328",
             appId: "1:887958270328:web:5e8395470a7e4a3017188d"
         };
