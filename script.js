@@ -37,12 +37,28 @@ window.toggleMenu = function () {
 }
 
 // Generate Anonymous Link
-window.generateLink = function () {
+/*window.generateLink = function () {
     let username = document.getElementById("username").value.trim();
     if (username === "") {
         alert("Please enter a username.");
         return;
-    }
+    }*/
+window.generateLink = function () {
+            let username = document.getElementById("username").value.trim();
+            if (username === "") {
+                alert("Please enter a username.");
+                return;
+            }
+        
+            let uniqueID = Math.random().toString(36).substring(2, 10);
+            let anonymousLink = `msg.html?user=${encodeURIComponent(username)}&id=${uniqueID}`;
+        
+            document.getElementById("linkOutput").innerHTML = `
+                <p>Your Anonymous Link:</p>
+                <a href="${anonymousLink}" target="_blank">${anonymousLink}</a>
+            `;
+        };
+        
 
     let uniqueID = Math.random().toString(36).substring(2, 10);
     /*let anonymousLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}&id=${uniqueID}`;*/
