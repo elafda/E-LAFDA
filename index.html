@@ -33,20 +33,22 @@
     <script type="module">
         // Import Firebase libraries
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js";
 
-        // Firebase Configuration
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCOIIAJ7hRSCS5Lh-rFApUI_0jn0gHdcFI",
-            authDomain: "elafda-com.firebaseapp.com",
-            projectId: "elafda-com",
-            storageBucket: "elafda-com.appspot.com",
-            messagingSenderId: "887958270328",
-            appId: "1:887958270328:web:5e8395470a7e4a3017188d"
+            apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
+            authDomain: "e-lafda-2a24c.firebaseapp.com",
+            projectId: "e-lafda-2a24c",
+            storageBucket: "e-lafda-2a24c.firebasestorage.app",
+            messagingSenderId: "263237488063",
+            appId: "1:263237488063:web:70db3731e500a9e9c6250a",
+            measurementId: "G-H53HVJ9BX6"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
         // Expose Firebase instance globally (needed for script.js)
