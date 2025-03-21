@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebas
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
 const firebaseConfig = {
-    databaseURL: "xyz" // Replace "xyz" with your actual Firebase Realtime Database URL
+    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Replace "xyz" with your actual Firebase Realtime Database URL
 };
 
 // Initialize Firebase
