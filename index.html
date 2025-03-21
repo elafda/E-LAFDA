@@ -3,122 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Lafda</title>
+    <title>E-Lafda - Find Lafda Around You</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-
-    <!-- Sidebar Menu Button -->
-    <div class="menu-button" onclick="toggleMenu()" aria-label="Toggle menu">☰</div>
-
-    <!-- Sidebar Menu -->
-    <div id="sidebar" class="sidebar" role="navigation">
-        <button class="close-btn" onclick="toggleMenu()" aria-label="Close menu">✖</button>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </div>
-
     <div class="container">
-        <h1>elafda.com</h1>
+        <h1>E-Lafda</h1>
         <h2>Find Lafda Around You!</h2>
-        <input type="text" id="username" placeholder="Enter a unique username" aria-label="Username">
-        <button onclick="generateLink()">Generate Anonymous Link</button>
-        <p id="linkOutput"></p>
+        <input type="text" id="username" placeholder="Enter a username" required>
+        <button id="generateLinkBtn">Generate Link</button>
+        <p id="generatedLink"></p>
+        
+        <!-- Countdown Timer -->
+        <div id="countdownContainer" class="hidden">
+            <p>⏳ Link expires in: <span id="countdown"></span></p>
+        </div>
     </div>
-
-    <!-- Messages Icon -->
-    <div class="messages-icon" onclick="toggleMessagesPanel()" aria-label="View Messages">
-        📩
-    </div>
-
-    <!-- Sliding Messages Panel -->
-    <div id="messagesPanel" class="messages-panel">
-        <button class="close-panel" onclick="toggleMessagesPanel()" aria-label="Close Messages Panel">✖</button>
-        <h2>Messages Received</h2>
-        <div id="receivedMessages" class="message-list"></div>
-    </div>
-
-    <!-- Message Box to Send Messages -->
-    <div class="msg-container">
-        <h2>Send an Anonymous Message</h2>
-        <textarea id="messageBox" placeholder="Type your message here..." rows="4" aria-label="Message"></textarea>
-        <button onclick="sendMessage()">Send</button>
-        <p id="status"></p>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase libraries
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        // Function to send a message
-        async function sendMessage() {
-            let message = document.getElementById("messageBox").value.trim();
-
-            if (message === "") {
-                alert("Message cannot be empty!");
-                return;
-            }
-
-            try {
-                // Add a new document to the 'messages' collection
-                await addDoc(collection(db, "messages"), {
-                    message: message, // Store the message content
-                    timestamp: serverTimestamp() // Automatically set the timestamp
-                });
-                document.getElementById("status").innerText = "✅ Message sent!";
-                document.getElementById("messageBox").value = ""; // Clear the message box
-            } catch (error) {
-                console.error("Error sending message:", error);
-                document.getElementById("status").innerText = "❌ Error sending message!";
-            }
-        }
-
-        // Function to display received messages
-        function displayReceivedMessages() {
-            const q = query(collection(db, "messages")); // Retrieve all messages
-            onSnapshot(q, (snapshot) => {
-                let messages = snapshot.docs.map(doc => `<p>📩 ${doc.data().message}</p>`).join("");
-                document.getElementById("receivedMessages").innerHTML = messages || "No messages received yet.";
-            });
-        }
-
-        // Call this function when the page loads to display messages
-        document.addEventListener("DOMContentLoaded", displayReceivedMessages);
-
-        // Toggle Messages Panel
-        window.toggleMessagesPanel = function () {
-            const panel = document.getElementById("messagesPanel");
-            if (panel.style.right === "0px") {
-                panel.style.right = "-400px"; // Hide the panel
-            } else {
-                panel.style.right = "0px"; // Show the panel
-            }
-        }
-    </script>
-
-    <script type="module" src="script.js"></script>
-
 </body>
 </html>

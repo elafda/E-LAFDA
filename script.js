@@ -1,80 +1,70 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-import { v4 as uuidv4 } from 'https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/esm-browser/v4.js';
+document.addEventListener("DOMContentLoaded", () => {
+    const generateLinkBtn = document.getElementById("generateLinkBtn");
+    const usernameInput = document.getElementById("username");
+    const generatedLink = document.getElementById("generatedLink");
+    const countdownContainer = document.getElementById("countdownContainer");
+    const countdownDisplay = document.getElementById("countdown");
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
-    authDomain: "e-lafda-2a24c.firebaseapp.com",
-    projectId: "e-lafda-2a24c",
-    storageBucket: "e-lafda-2a24c.firebasestorage.app",
-    messagingSenderId: "263237488063",
-    appId: "1:263237488063:web:70db3731e500a9e9c6250a",
-    measurementId: "G-H53HVJ9BX6"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const generateLinkBtn = document.getElementById('generateLinkBtn');
-const linkContainer = document.getElementById('linkContainer');
-const anonymousLink = document.getElementById('anonymousLink');
-const messageContainer = document.getElementById('messageContainer');
-const sendMessageBtn = document.getElementById('sendMessageBtn');
-const messageInput = document.getElementById('messageInput');
-const messages = document.getElementById('messages');
-const messageList = document.getElementById('messageList');
-const messageIcon = document.getElementById('messageIcon');
-
-// Generate a unique identifier for the user
-let userId = uuidv4();
-
-// Generate the anonymous link
-generateLinkBtn.addEventListener('click', () => {
-    const link = `${window.location.origin}/message.html?id=${userId}`;
-    anonymousLink.textContent = link;
-    linkContainer.classList.remove('hidden');
-    messageContainer.classList.remove('hidden');
-});
-
-// Send anonymous message
-sendMessageBtn.addEventListener('click', async () => {
-    const message = messageInput.value;
-    if (message) {
-        try {
-            await addDoc(collection(db, 'anon_messages'), {
-                message: message,
-                timestamp: new Date(),
-                userId: userId // Store the userId with the message
-            });
-            messageInput.value = ''; // Clear the input
-            alert("Message sent!");
-        } catch (error) {
-            console.error("Error sending message: ", error);
-            alert("Error sending message.");
+    // Generate Anonymous Link
+    generateLinkBtn.addEventListener("click", () => {
+        const username = usernameInput.value.trim();
+        if (username === "") {
+            alert("Please enter a username.");
+            return;
         }
-    } else {
-        alert("Please enter a message.");
-    }
-});
 
-// Load messages for the user
-async function loadMessages() {
-    const q = query(collection(db, 'anon_messages'), where("userId", "==", userId));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        const messageData = doc.data();
-        const li = document.createElement('li');
-        li.textContent = `${messageData.message} (Received at: ${messageData.timestamp.toDate().toLocaleString()})`;
-        messageList.appendChild(li);
+        const uniqueLink = `${window.location.origin}/msg/${encodeURIComponent(username)}`;
+        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
+
+        // Show countdown timer
+        countdownContainer.classList.remove("hidden");
+        startCountdown(24 * 60 * 60); // 24 hours
     });
-}
 
-// Show messages when the message icon is clicked
-messageIcon.addEventListener('click', () => {
-    messages.classList.toggle('hidden');
-    if (!messages.classList.contains('hidden')) {
-        loadMessages();
+    // Countdown Timer
+    function startCountdown(durationInSeconds) {
+        let timeLeft = durationInSeconds;
+
+        function updateTimer() {
+            if (timeLeft <= 0) {
+                countdownDisplay.textContent = "⛔ Link expired!";
+                generatedLink.innerHTML = ""; // Remove link after expiry
+                return;
+            }
+
+            let hours = Math.floor(timeLeft / 3600);
+            let minutes = Math.floor((timeLeft % 3600) / 60);
+            let seconds = timeLeft % 60;
+            countdownDisplay.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+
+        updateTimer();
+    }
+
+    // Handle messages on msg.html
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get("user");
+    if (userParam) {
+        document.getElementById("userDisplay").textContent = userParam;
+        
+        const sendMessageBtn = document.getElementById("sendMessageBtn");
+        const messageInput = document.getElementById("messageInput");
+        const statusMessage = document.getElementById("statusMessage");
+
+        sendMessageBtn.addEventListener("click", () => {
+            const message = messageInput.value.trim();
+            if (message === "") {
+                alert("Please enter a message.");
+                return;
+            }
+
+            // Placeholder for Firebase (You will replace this later)
+            console.log(`Message sent to ${userParam}: ${message}`);
+
+            messageInput.value = "";
+            statusMessage.textContent = "✅ Message sent anonymously!";
+        });
     }
 });

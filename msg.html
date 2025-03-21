@@ -3,88 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Anonymous Message</title>
+    <title>E-Lafda - Send Anonymous Message</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="msg-container">
-        <h2>Send an Anonymous Message to <span id="usernameDisplay"></span></h2>
-        <textarea id="messageBox" placeholder="Type your message here..." rows="4" aria-label="Message"></textarea>
-        <button onclick="sendMessage()">Send</button>
-        <p id="status"></p>
-        <div id="messageList"></div>
+    <div class="container">
+        <h1>E-Lafda</h1>
+        <h2>Send an Anonymous Message</h2>
+        <p>You're messaging: <strong id="userDisplay"></strong></p>
+        <textarea id="messageInput" placeholder="Type your message here..." rows="4"></textarea>
+        <button id="sendMessageBtn">Send</button>
+        <p id="statusMessage"></p>
     </div>
-
-    <!-- Firebase Setup -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, onSnapshot, serverTimestamp } 
-            from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPpZ-SA5lVYCauRkVOzqDA6MjKB7OQodI",
-            authDomain: "e-lafda-2a24c.firebaseapp.com",
-            projectId: "e-lafda-2a24c",
-            storageBucket: "e-lafda-2a24c.firebasestorage.app",
-            messagingSenderId: "263237488063",
-            appId: "1:263237488063:web:70db3731e500a9e9c6250a",
-            measurementId: "G-H53HVJ9BX6"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const db = getFirestore(app);
-
-        // Store database globally
-        window.firebaseDB = db;
-
-        // Get Username from URL
-        function getQueryParam(param) {
-            let urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        let username = getQueryParam("user") || "Anonymous";
-        document.getElementById("usernameDisplay").innerText = username;
-
-        // Send Message Function
-        async function sendMessage() {
-            let message = document.getElementById("messageBox").value.trim();
-            if (message === "") {
-                alert("Message cannot be empty!");
-                return;
-            }
-
-            try {
-                // Attempt to add the message to Firestore
-                await addDoc(collection(db, "messages"), {
-                    username: username,
-                    message: message,
-                    timestamp: serverTimestamp()
-                });
-                // If successful, update the status
-                document.getElementById("status").innerText = "✅ Message sent!";
-                document.getElementById("messageBox").value = "";
-            } catch (error) {
-                // If there is an error, log it and update the status
-                console.error("Error sending message:", error);
-                document.getElementById("status").innerText = "❌ Error sending message!";
-            }
-        }
-
-        // Retrieve and Display Messages
-        document.addEventListener("DOMContentLoaded", function () {
-            const q = query(collection(db, "messages"), where("username", "==", username));
-
-            onSnapshot(q, (snapshot) => {
-                let messages = snapshot.docs.map(doc => `<p>📩 ${doc.data().message}</p>`).join("");
-                document.getElementById("messageList").innerHTML = messages || "No messages yet.";
-            });
-        });
-    </script>
-
 </body>
 </html>
