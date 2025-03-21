@@ -54,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const sendMessageBtn = document.getElementById("sendMessageBtn");
         const messageInput = document.getElementById("messageInput");
-        const statusMessage = document.getElementById("statusMessage");
 
         sendMessageBtn.addEventListener("click", () => {
             const message = messageInput.value.trim();
@@ -66,8 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Placeholder for Firebase (Replace with actual Firebase logic)
             console.log(`Message sent to ${userParam}: ${message}`);
 
-            messageInput.value = "";
-            statusMessage.textContent = "✅ Message sent anonymously!";
+            document.body.innerHTML = "<div class='container'><h1>✅ Sent!</h1></div>";
         });
     }
 });
