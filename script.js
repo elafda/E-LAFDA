@@ -1,25 +1,29 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const generateLinkBtn = document.getElementById("generateLinkBtn");
-    const usernameInput = document.getElementById("username");
-    const generatedLink = document.getElementById("generatedLink");
-    const countdownContainer = document.getElementById("countdownContainer");
-    const countdownDisplay = document.getElementById("countdown");
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get("user");
 
-    // Generate Anonymous Link
-    generateLinkBtn.addEventListener("click", () => {
-        const username = usernameInput.value.trim();
-        if (username === "") {
-            alert("Please enter a username.");
-            return;
-        }
+    if (userParam && document.getElementById("userDisplay")) {
+        document.getElementById("userDisplay").textContent = userParam;
+        
+        const sendMessageBtn = document.getElementById("sendMessageBtn");
+        const messageInput = document.getElementById("messageInput");
+        const statusMessage = document.getElementById("statusMessage");
 
-        const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
-        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
+        sendMessageBtn.addEventListener("click", () => {
+            const message = messageInput.value.trim();
+            if (message === "") {
+                alert("Please enter a message.");
+                return;
+            }
 
-        // Show countdown timer
-        countdownContainer.classList.remove("hidden");
-        startCountdown(24 * 60 * 60); // 24 hours
-    });
+            // Placeholder for Firebase (Replace with actual Firebase logic)
+            console.log(`Message sent to ${userParam}: ${message}`);
+
+            messageInput.value = "";
+            statusMessage.textContent = "✅ Message sent anonymously!";
+        });
+    }
+});
 
     // Countdown Timer
     function startCountdown(durationInSeconds) {
