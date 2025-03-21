@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const uniqueLink = `${window.location.origin}/msg/${encodeURIComponent(username)}`;
+        const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
         generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
 
         // Show countdown timer
