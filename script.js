@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebas
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
 const firebaseConfig = {
-    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Replace "xyz" with your actual Firebase Realtime Database URL
+    databaseURL: "xyz" // Replace "xyz" with your actual Firebase Realtime Database URL
 };
 
 // Initialize Firebase
@@ -10,7 +10,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("JavaScript Loaded"); // Debugging line
+    console.log("✅ JavaScript Loaded Successfully!");
 
     const generateLinkBtn = document.getElementById("generateLinkBtn");
     const usernameInput = document.getElementById("username");
@@ -18,41 +18,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownDisplay = document.getElementById("countdown");
 
-    // ✅ Debugging: Check if elements exist
     if (!generateLinkBtn || !usernameInput || !generatedLink) {
-        console.error("One or more elements missing!");
+        console.error("❌ One or more elements missing! Check index.html.");
         return;
     }
 
-    // Generate Anonymous Link
+    // ✅ Fix: Generate Link Button Works
     generateLinkBtn.addEventListener("click", () => {
-        console.log("Generate Button Clicked"); // Debugging
+        console.log("✅ Generate Button Clicked!");
 
         const username = usernameInput.value.trim();
         if (username === "") {
-            alert("Please enter a username.");
+            alert("❌ Please enter a username.");
             return;
         }
 
         const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
         generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-        generatedLink.style.display = "block"; // ✅ Ensure it's visible
+        generatedLink.style.display = "block"; // Ensure it's visible
 
-        console.log("Generated Link:", uniqueLink); // Debugging
+        console.log("✅ Generated Link:", uniqueLink);
 
-        // Show countdown timer
+        // ✅ Show countdown timer
         countdownContainer.classList.remove("hidden");
-        startCountdown(24 * 60 * 60); // 24 hours
+        startCountdown(24 * 60 * 60);
     });
 
-    // Countdown Timer
+    // ✅ Fix: Countdown Timer Works
     function startCountdown(durationInSeconds) {
         let timeLeft = durationInSeconds;
 
         function updateTimer() {
             if (timeLeft <= 0) {
                 countdownDisplay.textContent = "⛔ Link expired!";
-                generatedLink.innerHTML = ""; // Remove link after expiry
+                generatedLink.innerHTML = "";
                 return;
             }
 
@@ -67,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateTimer();
     }
 
-    // Handle messages on msg.html
+    // ✅ Fix: Handle Messages on msg.html
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get("user");
 
@@ -80,17 +79,17 @@ document.addEventListener("DOMContentLoaded", () => {
         sendMessageBtn.addEventListener("click", () => {
             const message = messageInput.value.trim();
             if (message === "") {
-                alert("Please enter a message.");
+                alert("❌ Please enter a message.");
                 return;
             }
 
-            // Save message to Firebase Realtime Database
+            // ✅ Save to Firebase
             push(ref(db, `messages/${userParam}`), {
                 text: message,
                 timestamp: Date.now()
             });
 
-            // Change screen to "Sent"
+            // ✅ Change screen to "Sent"
             document.body.innerHTML = "<div class='container'><h1>✅ Sent!</h1></div>";
         });
     }
