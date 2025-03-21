@@ -10,32 +10,40 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("✅ JavaScript Loaded Successfully!");
+
     const generateLinkBtn = document.getElementById("generateLinkBtn");
     const usernameInput = document.getElementById("username");
     const generatedLink = document.getElementById("generatedLink");
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownDisplay = document.getElementById("countdown");
 
-    // Generate Anonymous Link
-    if (generateLinkBtn) {
-        generateLinkBtn.addEventListener("click", () => {
-            const username = usernameInput.value.trim();
-            if (username === "") {
-                alert("Please enter a username.");
-                return;
-            }
-
-            const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
-            generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-
-            // Show countdown timer
-            countdownContainer.classList.remove("hidden");
-            startCountdown(24 * 60 * 60); // 24 hours
-        });
+    // ✅ Debugging Check: Are elements present?
+    if (!generateLinkBtn || !usernameInput || !generatedLink) {
+        console.error("❌ One or more elements missing! Check index.html.");
+        return;
     }
 
+    // ✅ Fix: Generate Link Button Works
+    generateLinkBtn.addEventListener("click", () => {
+        console.log("✅ Generate Link Button Clicked!");
 
+        const username = usernameInput.value.trim();
+        if (username === "") {
+            alert("❌ Please enter a username.");
+            return;
+        }
 
+        const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
+        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
+        generatedLink.style.display = "block"; // ✅ Ensure it's visible
+
+        console.log("✅ Generated Link:", uniqueLink);
+
+        // ✅ Show countdown timer
+        countdownContainer.classList.remove("hidden");
+        startCountdown(24 * 60 * 60);
+    });
 
     // ✅ Fix: Countdown Timer Works
     function startCountdown(durationInSeconds) {
