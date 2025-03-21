@@ -3,7 +3,7 @@ import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/1
 
 // 🔥 Firebase Configuration - Replace with your actual database URL
 const firebaseConfig = {
-    databaseURL: "YOUR_FIREBASE_DATABASE_URL" // Replace this with your actual Firebase Realtime Database URL
+    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Updated URL
 };
 
 // ✅ Initialize Firebase
@@ -43,7 +43,7 @@ generateLinkBtn.addEventListener("click", async () => {
         });
 
         generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-        generatedLink.style.display = "block";
+        generatedLink.style.display = "block"; // Show the generated link
 
         console.log("✅ Generated Link:", uniqueLink);
 
