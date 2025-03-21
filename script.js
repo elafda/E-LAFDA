@@ -3,7 +3,7 @@ import { getDatabase, ref, set, get, push, onValue } from "https://www.gstatic.c
 
 // 🔥 Firebase Configuration - Replace with your actual config
 const firebaseConfig = {
-    databaseURL: "YOUR_FIREBASE_DATABASE_URL" // Replace with your actual Firebase Realtime Database URL
+    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Replace with your actual Firebase Realtime Database URL
 };
 
 // ✅ Initialize Firebase
