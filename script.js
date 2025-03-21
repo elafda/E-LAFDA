@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebas
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
 const firebaseConfig = {
-    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/"  // Replace "xyz" with your actual Firebase Realtime Database URL
+    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Replace "xyz" with your actual Firebase Realtime Database URL
 };
 
 // Initialize Firebase
@@ -10,30 +10,40 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("JavaScript Loaded"); // Debugging line
+
     const generateLinkBtn = document.getElementById("generateLinkBtn");
     const usernameInput = document.getElementById("username");
     const generatedLink = document.getElementById("generatedLink");
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownDisplay = document.getElementById("countdown");
 
-    // Generate Anonymous Link
-    if (generateLinkBtn) {
-        generateLinkBtn.addEventListener("click", () => {
-            const username = usernameInput.value.trim();
-            if (username === "") {
-                alert("Please enter a username.");
-                return;
-            }
-
-            const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
-            generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-            generatedLink.style.display = "block";
-
-            // Show countdown timer
-            countdownContainer.classList.remove("hidden");
-            startCountdown(24 * 60 * 60); // 24 hours
-        });
+    // ✅ Debugging: Check if elements exist
+    if (!generateLinkBtn || !usernameInput || !generatedLink) {
+        console.error("One or more elements missing!");
+        return;
     }
+
+    // Generate Anonymous Link
+    generateLinkBtn.addEventListener("click", () => {
+        console.log("Generate Button Clicked"); // Debugging
+
+        const username = usernameInput.value.trim();
+        if (username === "") {
+            alert("Please enter a username.");
+            return;
+        }
+
+        const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
+        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
+        generatedLink.style.display = "block"; // ✅ Ensure it's visible
+
+        console.log("Generated Link:", uniqueLink); // Debugging
+
+        // Show countdown timer
+        countdownContainer.classList.remove("hidden");
+        startCountdown(24 * 60 * 60); // 24 hours
+    });
 
     // Countdown Timer
     function startCountdown(durationInSeconds) {
@@ -63,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (userParam && document.getElementById("userDisplay")) {
         document.getElementById("userDisplay").textContent = userParam;
-        
+
         const sendMessageBtn = document.getElementById("sendMessageBtn");
         const messageInput = document.getElementById("messageInput");
 
