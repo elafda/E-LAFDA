@@ -1,3 +1,14 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+
+const firebaseConfig = {
+    databaseURL: "xyz" // Replace "xyz" with your actual Firebase Realtime Database URL
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 document.addEventListener("DOMContentLoaded", () => {
     const generateLinkBtn = document.getElementById("generateLinkBtn");
     const usernameInput = document.getElementById("username");
@@ -62,9 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Placeholder for Firebase (Replace with actual Firebase logic)
-            console.log(`Message sent to ${userParam}: ${message}`);
+            // Save message to Firebase Realtime Database
+            push(ref(db, `messages/${userParam}`), {
+                text: message,
+                timestamp: Date.now()
+            });
 
+            // Change screen to "Sent"
             document.body.innerHTML = "<div class='container'><h1>✅ Sent!</h1></div>";
         });
     }
