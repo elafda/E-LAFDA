@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+import { getDatabase, ref, set, get, push, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
+// 🔥 Firebase Configuration - Replace with your actual config
 const firebaseConfig = {
-    databaseURL: "xyz" // Replace "xyz" with your actual Firebase Realtime Database URL
+    databaseURL: "YOUR_FIREBASE_DATABASE_URL" // Replace with your actual Firebase Realtime Database URL
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
@@ -18,14 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const countdownContainer = document.getElementById("countdownContainer");
     const countdownDisplay = document.getElementById("countdown");
 
-    // ✅ Debugging Check: Are elements present?
     if (!generateLinkBtn || !usernameInput || !generatedLink) {
         console.error("❌ One or more elements missing! Check index.html.");
         return;
     }
 
-    // ✅ Fix: Generate Link Button Works
-    generateLinkBtn.addEventListener("click", () => {
+    // 🎯 Generate and Store Link in Firebase
+    generateLinkBtn.addEventListener("click", async () => {
         console.log("✅ Generate Link Button Clicked!");
 
         const username = usernameInput.value.trim();
@@ -35,21 +35,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
-        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-        generatedLink.style.display = "block"; // ✅ Ensure it's visible
+        const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
 
-        console.log("✅ Generated Link:", uniqueLink);
+        // ✅ Store in Firebase
+        try {
+            await set(ref(db, `links/${username}`), {
+                link: uniqueLink,
+                expiresAt: expirationTime
+            });
 
-        // ✅ Show countdown timer
-        countdownContainer.classList.remove("hidden");
-        startCountdown(24 * 60 * 60);
+            generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
+            generatedLink.style.display = "block";
+
+            console.log("✅ Generated Link:", uniqueLink);
+
+            // ✅ Store expiration time in localStorage & start countdown
+            localStorage.setItem("expirationTime", expirationTime);
+            countdownContainer.classList.remove("hidden");
+            startCountdown(expirationTime);
+        } catch (error) {
+            console.error("❌ Firebase Error:", error);
+        }
     });
 
-    // ✅ Fix: Countdown Timer Works
-    function startCountdown(durationInSeconds) {
-        let timeLeft = durationInSeconds;
-
+    // ⏳ Countdown Timer - Prevent Reset on Refresh
+    function startCountdown(expirationTime) {
         function updateTimer() {
+            let timeLeft = Math.max(0, Math.floor((expirationTime - Date.now()) / 1000));
+
             if (timeLeft <= 0) {
                 countdownDisplay.textContent = "⛔ Link expired!";
                 generatedLink.innerHTML = "";
@@ -60,14 +73,24 @@ document.addEventListener("DOMContentLoaded", () => {
             let minutes = Math.floor((timeLeft % 3600) / 60);
             let seconds = timeLeft % 60;
             countdownDisplay.textContent = `${hours}h ${minutes}m ${seconds}s`;
-            timeLeft--;
+
             setTimeout(updateTimer, 1000);
         }
 
         updateTimer();
     }
 
-    // ✅ Fix: Handle Messages on msg.html
+    // 🔄 Retrieve Expired Links on Page Load
+    window.addEventListener("load", async () => {
+        const expirationTime = localStorage.getItem("expirationTime");
+
+        if (expirationTime && Date.now() < expirationTime) {
+            countdownContainer.classList.remove("hidden");
+            startCountdown(expirationTime);
+        }
+    });
+
+    // 📩 Handle Messages on msg.html
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get("user");
 
@@ -76,22 +99,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const sendMessageBtn = document.getElementById("sendMessageBtn");
         const messageInput = document.getElementById("messageInput");
+        const messageContainer = document.getElementById("messageContainer");
 
-        sendMessageBtn.addEventListener("click", () => {
+        // ✅ Send Message
+        sendMessageBtn.addEventListener("click", async () => {
             const message = messageInput.value.trim();
             if (message === "") {
                 alert("❌ Please enter a message.");
                 return;
             }
 
-            // ✅ Save to Firebase
-            push(ref(db, `messages/${userParam}`), {
-                text: message,
-                timestamp: Date.now()
-            });
+            try {
+                await push(ref(db, `messages/${userParam}`), {
+                    text: message,
+                    timestamp: Date.now()
+                });
 
-            // ✅ Change screen to "Sent"
-            document.body.innerHTML = "<div class='container'><h1>✅ Sent!</h1></div>";
+                document.body.innerHTML = "<div class='container'><h1>✅ Message Sent!</h1></div>";
+            } catch (error) {
+                console.error("❌ Error sending message:", error);
+            }
+        });
+
+        // ✅ Retrieve Messages
+        onValue(ref(db, `messages/${userParam}`), (snapshot) => {
+            const messages = snapshot.val();
+            if (messages) {
+                let messageList = Object.values(messages).map(msg => `<p>${msg.text}</p>`).join("");
+                messageContainer.innerHTML = messageList;
+            }
         });
     }
 });
