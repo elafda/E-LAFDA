@@ -1,29 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const userParam = params.get("user");
+    const generateLinkBtn = document.getElementById("generateLinkBtn");
+    const usernameInput = document.getElementById("username");
+    const generatedLink = document.getElementById("generatedLink");
+    const countdownContainer = document.getElementById("countdownContainer");
+    const countdownDisplay = document.getElementById("countdown");
 
-    if (userParam && document.getElementById("userDisplay")) {
-        document.getElementById("userDisplay").textContent = userParam;
-        
-        const sendMessageBtn = document.getElementById("sendMessageBtn");
-        const messageInput = document.getElementById("messageInput");
-        const statusMessage = document.getElementById("statusMessage");
-
-        sendMessageBtn.addEventListener("click", () => {
-            const message = messageInput.value.trim();
-            if (message === "") {
-                alert("Please enter a message.");
+    // Generate Anonymous Link
+    if (generateLinkBtn) {
+        generateLinkBtn.addEventListener("click", () => {
+            const username = usernameInput.value.trim();
+            if (username === "") {
+                alert("Please enter a username.");
                 return;
             }
 
-            // Placeholder for Firebase (Replace with actual Firebase logic)
-            console.log(`Message sent to ${userParam}: ${message}`);
+            const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
+            generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
 
-            messageInput.value = "";
-            statusMessage.textContent = "✅ Message sent anonymously!";
+            // Show countdown timer
+            countdownContainer.classList.remove("hidden");
+            startCountdown(24 * 60 * 60); // 24 hours
         });
     }
-});
 
     // Countdown Timer
     function startCountdown(durationInSeconds) {
@@ -50,7 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Handle messages on msg.html
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get("user");
-    if (userParam) {
+
+    if (userParam && document.getElementById("userDisplay")) {
         document.getElementById("userDisplay").textContent = userParam;
         
         const sendMessageBtn = document.getElementById("sendMessageBtn");
@@ -64,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Placeholder for Firebase (You will replace this later)
+            // Placeholder for Firebase (Replace with actual Firebase logic)
             console.log(`Message sent to ${userParam}: ${message}`);
 
             messageInput.value = "";
