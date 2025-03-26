@@ -3,18 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Lafda - Send Anonymous Message</title>
+    <title>Send Anonymous Message</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>E-Lafda</h1>
-        <h2>Send an Anonymous Message</h2>
-        <p>You're messaging: <strong id="userDisplay"></strong></p>
-        <textarea id="messageInput" placeholder="Type your message here..." rows="4"></textarea>
-        <button id="sendMessageBtn">Send</button>
-        <p id="statusMessage"></p>
+    <div class="msg-container">
+        <h2>Send an Anonymous Message to <span id="usernameDisplay"></span></h2>
+        <textarea id="messageBox" placeholder="Type your message here..." rows="4"></textarea>
+        <button onclick="sendMessage()">Send</button>
+        <p id="status"></p>
     </div>
+
+    <script>
+        // Get Username from URL
+        function getQueryParam(param) {
+            let urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        let username = getQueryParam("user") || "Unknown User";
+        document.getElementById("usernameDisplay").innerText = username;
+
+        function sendMessage() {
+            let message = document.getElementById("messageBox").value.trim();
+            if (message === "") {
+                alert("Message cannot be empty!");
+                return;
+            }
+
+            document.getElementById("status").innerText = "Message sent successfully!";
+            document.getElementById("messageBox").value = "";
+        }
+    </script>
 </body>
 </html>

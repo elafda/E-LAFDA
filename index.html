@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Lafda - Find Lafda Around You</title>
+    <title>E-Lafda</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>E-Lafda</h1>
-        <h2>Find Lafda Around You!</h2>
-        <input type="text" id="username" placeholder="Enter a username" required>
-        <button id="generateLinkBtn">Generate Link</button>
-        <p id="generatedLink" style="display:none;"></p> <!-- Initially hidden -->
+    <!-- Sidebar Menu Button -->
+    <div class="menu-button" onclick="toggleMenu()">☰</div>
 
-        <!-- Countdown Timer -->
-        <div id="countdownContainer" class="hidden">
-            <p>⏳ Link expires in: <span id="countdown"></span></p>
-        </div>
+    <!-- Sidebar Menu -->
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">✖</button>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
     </div>
+
+    <div class="container">
+        <h1>elafda.com</h1>
+        <h2>Find Lafda Around You!</h2>
+        <input type="text" id="username" placeholder="Enter a unique username">
+        <button onclick="generateLink()">Generate Anonymous Link</button>
+        <p id="linkOutput"></p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

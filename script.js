@@ -1,76 +1,58 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
-
-// 🔥 Firebase Configuration - Replace with your actual database URL
-const firebaseConfig = {
-    databaseURL: "https://e-lafda-2a24c-default-rtdb.asia-southeast1.firebasedatabase.app/" // Updated URL
-};
-
-// ✅ Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-console.log("✅ Firebase Initialized");
-
-// 📌 DOM Elements
-const generateLinkBtn = document.getElementById("generateLinkBtn");
-const usernameInput = document.getElementById("username");
-const generatedLink = document.getElementById("generatedLink");
-const countdownContainer = document.getElementById("countdownContainer");
-const countdownDisplay = document.getElementById("countdown");
-
-if (!generateLinkBtn || !usernameInput || !generatedLink) {
-    console.error("❌ Missing elements in index.html");
-}
-
-// 🎯 Generate and Store Link in Firebase
-generateLinkBtn.addEventListener("click", async () => {
-    console.log("✅ Generate Link Button Clicked!");
-
-    const username = usernameInput.value.trim();
+// Function to generate an anonymous link
+function generateLink() {
+    let username = document.getElementById("username").value.trim();
+    
     if (username === "") {
-        alert("❌ Please enter a username.");
+        alert("Please enter a username.");
         return;
     }
 
-    const uniqueLink = `${window.location.origin}/msg.html?user=${encodeURIComponent(username)}`;
-    const expirationTime = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
-
-    // ✅ Store in Firebase
-    try {
-        await set(ref(db, `links/${username}`), {
-            link: uniqueLink,
-            expiresAt: expirationTime
-        });
-
-        generatedLink.innerHTML = `<a href="${uniqueLink}" target="_blank">${uniqueLink}</a>`;
-        generatedLink.style.display = "block"; // Show the generated link
-
-        console.log("✅ Generated Link:", uniqueLink);
-
-        // ✅ Store expiration time in localStorage & start countdown
-        localStorage.setItem("expirationTime", expirationTime);
-        countdownContainer.classList.remove("hidden");
-        startCountdown(expirationTime);
-    } catch (error) {
-        console.error("❌ Firebase Error:", error);
+    // Check if a link already exists
+    let storedData = JSON.parse(localStorage.getItem("lafdaLink"));
+    
+    if (storedData && new Date().getTime() < storedData.expiry) {
+        alert("You can only generate one link every 24 hours!");
+        return;
     }
-});
 
-// ⏳ Countdown Timer - Prevent Reset on Refresh
-function startCountdown(expirationTime) {
+    // Generate a new unique link
+    let uniqueID = Math.random().toString(36).substring(2, 10);
+    let expiryTime = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours from now
+    let anonymousLink = `msg.html?user=${encodeURIComponent(username)}&id=${uniqueID}`;
+
+    // Store link details in localStorage
+    localStorage.setItem("lafdaLink", JSON.stringify({ link: anonymousLink, expiry: expiryTime }));
+
+    // Display the link
+    document.getElementById("linkOutput").innerHTML = `
+        <p>Your Anonymous Link (expires in 24 hours):</p>
+        <a href="${anonymousLink}" target="_blank">${window.location.origin}/${anonymousLink}</a>
+        <p id="countdown"></p>
+    `;
+
+    // Start countdown
+    startCountdown(expiryTime);
+}
+
+// Function to start the countdown timer
+function startCountdown(expiryTime) {
+    let countdownElement = document.getElementById("countdown");
+
     function updateTimer() {
-        let timeLeft = Math.max(0, Math.floor((expirationTime - Date.now()) / 1000));
+        let now = new Date().getTime();
+        let timeLeft = expiryTime - now;
 
         if (timeLeft <= 0) {
-            countdownDisplay.textContent = "⛔ Link expired!";
-            generatedLink.innerHTML = "";
+            countdownElement.innerHTML = "Link expired!";
+            localStorage.removeItem("lafdaLink"); // Remove expired link
             return;
         }
 
-        let hours = Math.floor(timeLeft / 3600);
-        let minutes = Math.floor((timeLeft % 3600) / 60);
-        let seconds = timeLeft % 60;
-        countdownDisplay.textContent = `${hours}h ${minutes}m ${seconds}s`;
+        let hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        countdownElement.innerHTML = `Expires in: ${hours}h ${minutes}m ${seconds}s`;
 
         setTimeout(updateTimer, 1000);
     }
@@ -78,12 +60,16 @@ function startCountdown(expirationTime) {
     updateTimer();
 }
 
-// 🔄 Retrieve Expired Links on Page Load
-window.addEventListener("load", async () => {
-    const expirationTime = localStorage.getItem("expirationTime");
+// Check if a valid link already exists on page load
+document.addEventListener("DOMContentLoaded", function () {
+    let storedData = JSON.parse(localStorage.getItem("lafdaLink"));
 
-    if (expirationTime && Date.now() < expirationTime) {
-        countdownContainer.classList.remove("hidden");
-        startCountdown(expirationTime);
+    if (storedData && new Date().getTime() < storedData.expiry) {
+        document.getElementById("linkOutput").innerHTML = `
+            <p>Your Active Link (expires in 24 hours):</p>
+            <a href="${storedData.link}" target="_blank">${window.location.origin}/${storedData.link}</a>
+            <p id="countdown"></p>
+        `;
+        startCountdown(storedData.expiry);
     }
 });
