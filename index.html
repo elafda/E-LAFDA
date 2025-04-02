@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Lafda - Join or Create Debate</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script defer src="/static/script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>E-Lafda</h1>
+        <h2>Find Lafda Around You!</h2>
+
+        <!-- Join Existing Lafda -->
+        <div class="card">
+            <h3>Join E-Lafda</h3>
+            <input type="text" id="lafdaCode" placeholder="Enter Lafda Code" required>
+            <button id="joinLafdaBtn">Join Lafda</button>
+        </div>
+
+        <!-- Create New Lafda -->
+        <div class="card">
+            <h3>Create E-Lafda</h3>
+            <input type="text" id="lafdaTitle" placeholder="Enter Topic of Debate" required>
+            <button id="generateLinkBtn">Get Started</button>
+
+            <!-- Display Generated Link -->
+            <div id="linkContainer" class="hidden">
+                <p>Your Lafda Link:</p>
+                <input type="text" id="lafdaLink" readonly>
+                <button onclick="copyLink()">Copy</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
